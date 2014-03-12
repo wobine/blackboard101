@@ -1,4 +1,6 @@
 # wobine test file for multisignatures - to be used in a world bitcoin network piece
+# DO NOT USE THIS CODE FOR ANYTHING THAT MATTERS
+# this is written by wobine for educational purposes on the World Bitcoin Network
 
 import hashlib, re, sys, os, base64, time, random, hmac, urllib2, json
 from bitcoinrpc.util import *
@@ -15,6 +17,10 @@ add = [1,1,1]
 privkey = [1,1,1]
 pubkey = [1,1,1]
 mid = "\",\""
+
+
+#print bitcoin.listunspent()
+
 
 """
 testadd1 = '03e0882fb32689e4ba97f127955c8411dac1e9e20c2db7c442f217e09312d624f0'
@@ -36,30 +42,42 @@ for i in range(0, 3):
     print
     print "Address Pair Number", i+1
     add[i] = bitcoin.getnewaddress()
-    print "Public Address is",add[i]
+    print "Public Address -",len(add[i]),"chars -", add[i]
     #print bitcoin.getreceivedbyaddress(add)
     #print bitcoin.listtransactions(address=add)
     privkey[i] = bitcoin.dumpprivkey(add[i])
-    print "Private Key is ", privkey[i]
+    print "Private Key -", len(privkey[i]),"chars -",privkey[i]
 
     #isolate the public key
-    ee = str(bitcoin.validateaddress(add[i]))
-    splitter = ee.split('pubkey=u')
-    pubkey[i] = splitter[1][1:67]
-    print "Public Key is",pubkey[i]
+    validDate = bitcoin.validateaddress(add[i])
+    pubkey[i] = validDate["pubkey"]
+    #scripPubKy = unspentfake[i]["scriptPubKey"]
+    #ee = str(bitcoin.validateaddress(add[i]))
+    #splitter = ee.split('pubkey=u')
+    #pubkey[i] = splitter[1][1:67]
+    print "Public Key -",len(pubkey[i]),"chars -",pubkey[i]
 
 print
-print "Paste the following into bitcoind creates multisig address"
+print "Paste this into bitcoind to verify multisig address"
 print "%s%s%s%s%s%s%s" % ('bitcoind createmultisig 2 \'["',pubkey[0],mid,pubkey[1],mid,pubkey[2],'"]\'')
 
 print
 jsonaddy = [pubkey[0],pubkey[1],pubkey[2]]
 print "The multisig address is"
 multisigaddy = bitcoin.addmultisigaddress(2,jsonaddy)
-multiaddyandredeem = bitcoin.createmultisig(2,jsonaddy)
-print multisigaddy
+multiaddyandredeem = (bitcoin.createmultisig(2,jsonaddy))
+print len(multisigaddy)," chars - ", multisigaddy
 print
-print multiaddyandredeem
+print "The redeemScript -", len(multiaddyandredeem["redeemScript"]), "chars -",multiaddyandredeem["redeemScript"]
+print
+
+
+#splitter = multiaddyandredeem.split(': u')
+#redeemscrip = splitter[1][1:211]
+print
+#print redeemscrip
+
+
 
 
 
@@ -81,7 +99,7 @@ Public Address is 1FKYGkc56CdMNm8E3ZGGH7566371nMntCs
 Private Key is  KxAfTG5L83vkvrKQ1FQYFBJVhKALEUFnsGwVGzFSwwTnhkkdPfcW
 Public Key is 027f5fdde085f16def08448aca24c936df218a0e8f076edde86b84e52adad3dd1a
 
-Paste the following into bitcoind creates multisig address
+Paste this into bitcoind to verify multisig address
 bitcoind createmultisig 2 '["03e0882fb32689e4ba97f127955c8411dac1e9e20c2db7c442f217e09312d624f0","020b188c6eda59cb402bfc3b620c45d1fd539f2f72004ba8a1f76bfc1c297395e5","027f5fdde085f16def08448aca24c936df218a0e8f076edde86b84e52adad3dd1a"]'
 
 The multisig address is
@@ -92,6 +110,16 @@ The multisig address is
 
 
     
+
+
+
+
+
+
+
+
+
+
 
 
 
