@@ -1,5 +1,5 @@
 # Wobine added a couple features for multisigs 3/11/14 - createmultisig
-#
+# Replace the connection.py in the bitcoinrpc with this one for multisigs
 # Copyright (c) 2010 Witchspace <witchspace81@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
