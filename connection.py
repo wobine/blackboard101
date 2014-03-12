@@ -282,7 +282,8 @@ class BitcoinConnection(object):
         - *txid* -- Transactiond id for which the info should be returned
 
         """
-        return TransactionInfo(**self.proxy.gettransaction(txid))
+        return self.proxy.gettransaction(txid)
+        #return TransactionInfo(**self.proxy.gettransaction(txid))
 
     def getrawtransaction(self, txid, verbose=True):
         """
@@ -293,10 +294,11 @@ class BitcoinConnection(object):
         - *txid* -- Transactiond id for which the info should be returned.
         - *verbose* -- If False, return only the "hex" of the transaction.
 
-        """
         if verbose:
             return TransactionInfo(**self.proxy.getrawtransaction(txid, 1))
         return self.proxy.getrawtransaction(txid, 0)
+        """
+        return self.proxy.getrawtransaction(txid,0)
 
     def gettxout(self, txid, index, mempool=True):
         """
@@ -457,7 +459,8 @@ class BitcoinConnection(object):
 
         - *validateaddress*
         """
-        return AddressValidation(**self.proxy.validateaddress(validateaddress))
+        return self.proxy.validateaddress(validateaddress)
+        #return AddressValidation(**self.proxy.validateaddress(validateaddress))
 
     def getbalance(self, account=None, minconf=None):
         """
@@ -585,8 +588,9 @@ class BitcoinConnection(object):
 
 
         """
-        return [TransactionInfo(**tx) for tx in
-                self.proxy.listunspent(minconf, maxconf)]
+        return self.proxy.listunspent(minconf,maxconf)
+        #return [TransactionInfo(**tx) for tx in
+        #       self.proxy.listunspent(minconf, maxconf)]
 
     def keypoolrefill(self):
         "Fills the keypool, requires wallet passphrase to be set."
@@ -676,3 +680,4 @@ class BitcoinConnection(object):
         :rtype: bool
         """
         return self.proxy.verifymessage(address, signature, message)
+
