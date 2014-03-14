@@ -15,9 +15,13 @@ from bitcoinrpc.connection import *
 
 bitcoin = connect_to_local() #creates an object called 'bitcoin' that allows for bitcoind calls
 
-# YOU NEED AT LEAST TWO OF THE PRIVATE KEYS FROM PART ONE
-multisigprivkeyone = "L4VKzfujD6sTdWDsBMYUYWib4kFezuRNoJWNbzqYpQxgXtYJdiUP"
-multisigprivkeytwo = "L3cYbSShrexaL64N7psvDMJ7617RfeVRAurZH6KMssh9qT4pS5kp"
+# YOU NEED AT LEAST TWO OF THE PRIVATE KEYS FROM PART ONE linked to your MULTI-SIG ADDRESS
+multisigprivkeyone = "L4VKzfujD6sTdWDsBMYUYWib4kFezuRNoJWNbzqYpQxgXtYJdiUP" #your key/brother one
+multisigprivkeytwo = "L3cYbSShrexaL64N7psvDMJ7617RfeVRAurZH6KMssh9qT4pS5kp" #wallet service/brother two
+multisigprivkeythree = "KxAfTG5L83vkvrKQ1FQYFBJVhKALEUFnsGwVGzFSwwTnhkkdPfcW" #safe deposit box/brother three
+ChangeAddress = "17majtRMjCjpSCasbXFxWiHWAmzLTSdtga"
+SetTxFee = int(0.0005*100000000)
+print SetTxFee, "Satoshis <<== Current Transaction Fee"
 
 unspent = bitcoin.listunspent() #List all unspent funds in bitcoind to see if you have some multisigs to spend from
 
@@ -28,7 +32,7 @@ for i in range(0, len(unspent)):
     print "The transaction id for output",i+1,"is"
     print unspent[i]["txid"]
     print "The ScriptPubKey is", unspent[i]["scriptPubKey"]
-    print "on Public Address",unspent[i]["address"]
+    print "on Public Address =====>>",unspent[i]["address"]
 
 print
 totalcoin = int(bitcoin.getbalance()*100000000)
@@ -62,7 +66,8 @@ else:
             print
             SendAddress = str(raw_input('Send funds to which bitcoin address? ')) or "1M72Sfpbz1BPpXFHz9m3CdqATR44Jvaydd" #default value Sean's Outpost
             print
-            print "This send to",SendAddress,"will leave", int(unspent[WhichTrans]["amount"]*100000000) - HowMuch,"Satoshis in your accounts"
+            Leftover = int(unspent[WhichTrans]["amount"]*100000000)-HowMuch-SetTxFee
+            print "This send to",SendAddress,"will leave", Leftover,"Satoshis in your accounts"
             print
             print "Creating the raw transaction for User One - Private Key One"
             print
@@ -70,7 +75,7 @@ else:
             rawtransact = bitcoin.createrawtransaction ([{"txid":unspent[WhichTrans]["txid"],
                     "vout":unspent[WhichTrans]["vout"],
                     "scriptPubKey":unspent[WhichTrans]["scriptPubKey"],
-                    "redeemScript":unspent[WhichTrans]["redeemScript"]}],{SendAddress:0.0001})
+                    "redeemScript":unspent[WhichTrans]["redeemScript"]}],{SendAddress:HowMuch,ChangeAddress:Leftover})
             print "bitcoind decoderawtransaction", rawtransact
             print
             print
