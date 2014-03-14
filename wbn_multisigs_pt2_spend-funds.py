@@ -1,8 +1,10 @@
-# MULTISIGS - PART TWO - SPENDING FROM A MULTISIG ADDRESS
+# MULTISIGS - PART TWO - SPENDING FROM A 2-of3 MULTISIG ADDRESS
+# This simple wallet works with bitcoind and will only work with 2-of-3 multisigs
 # wobine code for world bitcoin network blackboard 101
 # Educational Purposes only
 # Python 2.7.6 and relies on bitcoind & bitcoinrpc & wobine's github connection file
 # We had to change the bitcoinrpc 'connection.py' file to add multisig support
+# you'll need to download our 'connection.py' file from Github & stuff it in your bitcoinrpc folder
 
 from bitcoinrpc.util import *
 from bitcoinrpc.exceptions import *
@@ -19,11 +21,11 @@ bitcoin = connect_to_local() #creates an object called 'bitcoin' that allows for
 multisigprivkeyone = "L4VKzfujD6sTdWDsBMYUYWib4kFezuRNoJWNbzqYpQxgXtYJdiUP" #your key/brother one
 multisigprivkeytwo = "L3cYbSShrexaL64N7psvDMJ7617RfeVRAurZH6KMssh9qT4pS5kp" #wallet service/brother two
 multisigprivkeythree = "KxAfTG5L83vkvrKQ1FQYFBJVhKALEUFnsGwVGzFSwwTnhkkdPfcW" #safe deposit box/brother three
-ChangeAddress = "17majtRMjCjpSCasbXFxWiHWAmzLTSdtga"
-SetTxFee = int(0.0005*100000000)
-print SetTxFee, "Satoshis <<== Current Transaction Fee"
+ChangeAddress = "3QgHn6PsMuszHSMdrB6cmN5bNncyfGQTpi" #!!! Makes Sure to set your own personal Change Address
 
-unspent = bitcoin.listunspent() #List all unspent funds in bitcoind to see if you have some multisigs to spend from
+SetTxFee = int(0.00005*100000000) # Lets proper good etiquette & put something aside for our friends the miners
+
+unspent = bitcoin.listunspent() # Query wallet.dat file for unspent funds to see if we have multisigs to spend from
 
 print "Your Bitcoin-QT/d has",len(unspent),"unspent outputs"
 for i in range(0, len(unspent)):
@@ -46,11 +48,14 @@ else:
     tempaddy = str(unspent[WhichTrans]["address"])
     print
     if int(tempaddy[0:1]) == 1:
-        print "The receivng address on that tx starts with a 1 - its not multisig."
+        print "The public address on that account starts with a '1' - its not multisig."
     elif int(tempaddy[0:1]) == 3:
-        print "The receivng address on that tx starts with a '3' which makes it a multisig."
-        print "To create a raw multisig transaction we need : txid, scriptPubKey and redeemScript"
-        print # fortunately all of this is right there in the bitcoind 'listunspent' call from before
+        print "The public address on that account is",tempaddy
+        print "The address starts with the number '3' which makes it a multisig."
+        print
+        print "All multisig transactions need: txid, scriptPubKey and redeemScript"
+        print "Fortunately all of this is right there in the bitcoind 'listunspent' call from before"
+        print
         print "The txid is:",unspent[WhichTrans]["txid"]
         print "The ScriptPubKey is:", unspent[WhichTrans]["scriptPubKey"]
         print "And only multisigs have redeemScripts."
@@ -67,7 +72,8 @@ else:
             SendAddress = str(raw_input('Send funds to which bitcoin address? ')) or "1M72Sfpbz1BPpXFHz9m3CdqATR44Jvaydd" #default value Sean's Outpost
             print
             Leftover = int(unspent[WhichTrans]["amount"]*100000000)-HowMuch-SetTxFee
-            print "This send to",SendAddress,"will leave", Leftover,"Satoshis in your accounts"
+            print "This send to",SendAddress,"will leave", Leftover,"Satoshis in your accounts."
+            print "A tx fee of",SetTxFee,"will be sent to the miners"
             print
             print "Creating the raw transaction for User One - Private Key One"
             print
@@ -103,12 +109,21 @@ else:
                                       unspent[WhichTrans]["vout"],',"scriptPubKey":"',unspent[WhichTrans]["scriptPubKey"],'","redeemScript":"',
                                       unspent[WhichTrans]["redeemScript"],'"}]\' \'["',multisigprivkeytwo,'"]\'')
             print
-            print bitcoin.signrawtransaction (signedone["hex"],
+            doublesignedrawtransaction = bitcoin.signrawtransaction (signedone["hex"],
                     [{"txid":unspent[WhichTrans]["txid"],
                     "vout":0,"scriptPubKey":unspent[WhichTrans]["scriptPubKey"],
                     "redeemScript":unspent[WhichTrans]["redeemScript"]}],
                     [multisigprivkeytwo])
+            print doublesignedrawtransaction
             print
+            print "You are now ready to send",HowMuch,"Satoshis to",SendAddress
+            print "And",Leftover,"Satoshis will be sent to the change account",ChangeAddress
+            print "Finally, a miner's fee of ",SetTxFee,"Satoshis will be sent to the miners"
+            print
+
+            ReallyNow = (raw_input('If you hit return now, you will be sending these funds from your multisig account '))
+            ReallyNow2 = (raw_input('No...REally...If you hit return now, you will be sending funds from your multisig account '))
+
             
             #print "The following is a regular transaction - not multisig"
             #print "bitcoind createrawtransaction", bitcoin.createrawtransaction([{"txid": unspent[WhichTrans]["txid"],
