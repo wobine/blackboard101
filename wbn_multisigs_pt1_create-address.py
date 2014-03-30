@@ -56,10 +56,3 @@ print "Next time we'll go through all the steps to spend from your new multisig 
 
 
 
-
-
-
-
-
-
-
