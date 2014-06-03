@@ -46,8 +46,13 @@ def EccMultiply(GenPoint,ScalarHex): #Double & add. Not true multiplication
             Q=ECadd(Q,GenPoint); # print "ADD", Q[0]; print
     return (Q)
 
-print; print "******* Public Key Generation *********"; print
+print; print "******* Public Key Generation *********"; 
+print
 PublicKey = EccMultiply(GPoint,privKey)
-print "the private key:"; print privKey; print
-print "the uncompressed public key (not address):"; print PublicKey; print;
-print "the official Public Key - compressed:"; print "02"+str(hex(PublicKey[0])[2:-1]).zfill(64)
+print "the private key:"; 
+print privKey; print
+print "the uncompressed public key (not address):"; 
+print PublicKey; 
+print;
+print "the official Public Key - compressed:"; 
+print "02"+str(hex(PublicKey[0])[2:-1]).zfill(64)
