@@ -29,9 +29,7 @@ def ECadd(a,b): # Not true addition, invented for EC. Could have been called any
     return (x,y)
 
 def ECdouble(a): # This is called point doubling, also invented for EC.
-    LamNumer = 3*a[0]*a[0]+Acurve
-    LamDenom = 2*a[1]
-    Lam = (LamNumer * modinv(LamDenom,Pcurve)) % Pcurve
+    Lam = ((3*a[0]*a[0]+Acurve) * modinv((2*a[1]),Pcurve)) % Pcurve
     x = (Lam*Lam-2*a[0]) % Pcurve
     y = (Lam*(a[0]-x)-a[1]) % Pcurve
     return (x,y)
