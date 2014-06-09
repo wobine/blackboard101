@@ -50,7 +50,9 @@ PublicKey = EccMultiply(GPoint,privKey)
 print "the private key:"; 
 print privKey; print
 print "the uncompressed public key (not address):"; 
-print PublicKey; 
+print PublicKey; print
+print "the uncompressed public key (HEX):"; 
+print "04" + "%064x" % PublicKey[0] + "%064x" % PublicKey[1]; 
 print;
 print "the official Public Key - compressed:"; 
 print "02"+str(hex(PublicKey[0])[2:-1]).zfill(64)
