@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Day One with Bitcore</title>
+    <script src="bitcore.js"></script>
+    <link rel="stylesheet" href="http://www.worldbitcoinnetwork.com/wobinefiles/bootstrap.min.css">
+  </head>
+
+  <body>
+    <script>
+    function bitcorePrivKey(){
+      var bitcore = require('bitcore'); // make sure called bitcore.js above
+      var brainpass = document.getElementById("brainpassw").value; // grab the user input
+      document.getElementById("BrainPW").innerHTML = ("Your Brain Wallet is " + brainpass); // echo the user's brain wallet input to the screen
+      var privateKey = bitcore.util.sha256(brainpass); // turn the brain wallet into a standard bitcoin private key by running it through SHA256
+      var privkeytext = bitcore.buffertools.toHex(privateKey)
+      var key = new bitcore.Key(); // initiate a new bitcore Key (holds public & private keys)
+      key.private = privateKey; // add in our sha256 to the private key side
+      document.getElementById("PrivKey").innerHTML = ("Your Private Key is " + privkeytext); // echo the private key to the screen
+      key.regenerateSync(); // generate the public key (not the public address)
+      var hash = bitcore.util.sha256ripe160(key.public); // start converting public key to public address
+      var version = bitcore.networks['livenet'].addressVersion; // get the address version
+      var addr = new bitcore.Address(version, hash); // finalize the public address
+      document.getElementById("PubKey").innerHTML = addr.toString(); // echo it to the screen
+      }
+    </script>
+
+    <div style="margin-left:33px">
+      <h3>My First Bitcore App</h3>
+      <p>Type in a Brain Wallet password</p>
+      <input type="text" id="brainpassw" value="Satoshi Nakamoto">
+      <p>Click the "Convert It" button to get the private and public keys.</p>
+      <button onclick="bitcorePrivKey()">Convert It</button>
+      <p></p>
+      <p id="BrainPW"></p>
+      <p id="PrivKey"></p>
+      <p id="PubKey"></p>
+      <p style="color:#ff0000">Note: We highly recommend NOT using brain wallets for real value.</p>
+    </div>
+  </body>
+</html>
