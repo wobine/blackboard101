@@ -53,4 +53,7 @@ print "the uncompressed public key (not address):";
 print PublicKey; 
 print;
 print "the official Public Key - compressed:"; 
-print "02"+str(hex(PublicKey[0])[2:-1]).zfill(64)
+if PublicKey[1] % 2 = 1: # If the Y value for the Public Key is odd.
+    print "03"+str(hex(PublicKey[0])[2:-1]).zfill(64)
+else: # Or else, if the Y value is even.
+    print "02"+str(hex(PublicKey[0])[2:-1]).zfill(64)
