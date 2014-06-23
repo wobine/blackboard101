@@ -1,0 +1,139 @@
+<html ng-app="nameApp">
+  <head>
+    <meta charset="utf-8">
+    <title>wbn - Bitcoin Price Speculator Model - Alpha Version</title>
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+      <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js">
+        </script>
+      <link rel="stylesheet" href="http://www.ethereum.org/linker/styles/bootstrap.min.css">
+      <link rel="stylesheet" href="css-wbn-BitcoinPriceSpeculator.css">
+      <link rel="icon" type="image/png" href="http://www.worldbitcoinnetwork.com/wobinefiles/favicon.ico">
+
+    <script>
+      var nameApp = angular.module('nameApp', []);
+      nameApp.controller('NameCtrl', function ($scope, $http){
+        $http.get('https://blockchain.info/q/totalbc').success(function(data) {
+        $scope.numBTCs = data/100e6});
+        $http.get('https://blockchain.info/q/24hrprice').success(function(data) {
+        $scope.bitPrice = data;
+        });
+        $scope.NumberWithCommas = function(x) {
+          return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); };
+
+        $scope.dMarket = [
+          {"name":"Amazon","min":0,"max":50,"value":1,"title": "Amazon & Others (Vol:$50 Billion)","isMerch":1,"type":"%", "scalar":50e9},
+          {"name":"Gold","min":0,"max":20,"value":0.25,"num":0,"title": "Gold/Store of Value ($8 Trillion)","isMerch":0,"type":"%", "scalar":8e12},
+          {"name":"BlackMarket","min":0,"max":50,"value":0.5,"title": "Black Market ($650 Billion)","isMerch":1,"type":"%", "scalar":65e10},
+          {"name":"MoneySupply","min":0,"max":20,"value":0.25,"title": "Global Money Supply ($3 Trillion)","isMerch":0,"type":"%", "scalar":3e12},
+          {"name":"Remittances","min":0,"max":100,"value":0.4,"title": "Remittances ($500 Billion)","isMerch":1,"type":"%", "scalar":5e11}
+        ];
+
+        $scope.dVar = [
+          {"name":"TotalBTC","min":0,"max":21,"value":61,"title": "Total Bitcoins (Max 21 Million)","isMerch":0,"type":" Million Coins", "scalar":1e6},
+          {"name":"LostBTC","min":0,"max":12,"value":8,"title": "Lost Bitcoins (Max 12 Million)","isMerch":0,"type":" Million Coins", "scalar":1e6},
+          {"name":"Risk","min":0,"max":100,"value":10,"title": "Risk of Failure (51% Attack...etc)","isMerch":0,"type":"% Risk of Failure", "scalar":-1},
+          {"name":"Velocity","min":0,"max":"100","value":20,"title": "Velocity (Fast=Lower Bitcoin Price)","isMerch":1,"type":"% Max Velocity", "scalar":-1},
+          {"name":"Downward","min":0,"max":20,"value":28,"title": "Merchant Pressure (Max 20%)","isMerch":1,"type":"% Selling Pressure", "scalar":-1},
+          {"name":"Speculation","min":0,"max":20,"value":35,"title": "Speculation Fever (Max 20%)","isMerch":0,"type":"% Speculative Hype", "scalar":1},
+          {"name":"Regulation","min":0,"max":40,"value":7,"title": "Regulation Pressure (Max 40%)","isMerch":0,"type":"% Regulation", "scalar":-1},
+          {"name":"Volatility","min":0,"max":40,"value":20,"title": "Volatility Fears (Max 40%)","isMerch":0,"type":"% Volatility Fears", "scalar":-1},
+        ];
+
+
+        $scope.CalculatePrice = function() {
+          $scope.NumCoins = $scope.dVar[0].value * $scope.dVar[0].max /100
+          $scope.LostCoins = $scope.dVar[1].value * $scope.dVar[1].max /100
+          $scope.TotNumCoins = ($scope.NumCoins - $scope.LostCoins) * $scope.dVar[0].scalar;
+
+          $scope.AllVariables = 0;
+          $scope.MerchVariables = 0;
+          for (i = 2; i < $scope.dVar.length; i++) { 
+            if ($scope.dVar[i].scalar < 0){
+              $scope.Unit = ($scope.dVar[i].value * $scope.dVar[i].max / 10000);
+              } 
+              else {$scope.Unit = -($scope.dVar[i].value * $scope.dVar[i].max / 10000);
+              }            
+            if ($scope.dVar[i].isMerch == 0) {
+              $scope.AllVariables += $scope.Unit;
+              }
+              else {$scope.MerchVariables += $scope.Unit;
+              }
+          }
+
+          $scope.AllMarkets = 0;
+          for (i = 0; i < $scope.dMarket.length; i++) { 
+            $scope.Unit = ($scope.dMarket[i].value * $scope.dMarket[i].max / 10000) * ($scope.dMarket[i].scalar);
+            if ($scope.dMarket[i].isMerch == 1) {
+              $scope.Unit = $scope.Unit * (1-$scope.MerchVariables);
+            }
+            $scope.AllMarkets += $scope.Unit;
+          }
+
+          if((1-$scope.AllVariables) > 0) {
+            $scope.ZeePrice = $scope.AllMarkets * (1-$scope.AllVariables)}
+            else {$scope.ZeePrice = $scope.AllMarkets * 0.0000001}; //just a really low number
+
+          if($scope.TotNumCoins > 0) {$scope.ZeePriceFormat = "$ " + $scope.NumberWithCommas(($scope.ZeePrice/$scope.TotNumCoins).toFixed(2))}
+            else {$scope.ZeePriceFormat = "Infinity - No Bitcoins Available"};
+        };
+    });
+    </script>
+  </head>
+
+<body ng-controller="NameCtrl">
+
+<div style="position:fixed; z-index:4;">
+  <div style="font-size:24px; background:black; padding:18px; padding-left:24px; padding-bottom:12px; color:#909090">
+    Mission Impossible: Calculating Bitcoin's Future Value<br/><p style="font-size:13px">A Simple Linear Speculative Model - Alpha Version</p></div>
+    <div style="font-size:24px; background:#f9f9f9; padding-left:22px; padding-right:22px; margin-bottom:-66px; box-shadow: 0px 6px 4px #888888;">
+      <div style="padding-top:12px">
+        <p>Total Bitcoins: <strong id="outtyjson">{{(numBTCs/1e6).toFixed(2)}}</strong> Million &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Current Price: $ <strong id="utterJson">{{bitPrice}}</strong> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Market Cap: $ <strong id="MarkCap">{{(numBTCs * bitPrice/1e9).toFixed(2)}}</strong> Billion</p>
+        <div class="strongguy"><h1>{{CalculatePrice()}}{{ZeePriceFormat}}</h1><p style="font-size:14px !important">Bitcoin Price - WBN Model</p></div>
+        <hr></div>
+    </div>
+  </div>
+
+<div style="position:absolute; margin-top:283px;">
+  <div style="width:960px; padding:22px;">
+
+  <br/>
+    <div class="box4">Key Markets Where Bitcoin Can Grow<span style="float:right">Total Market Size in Model: ${{NumberWithCommas((AllMarkets/1e9).toFixed(2))}} billion</span></div>
+
+  <table>
+    <tr ng-repeat="slider in dMarket" class="box{{$index%2}}">
+      <td width="322px" style="margin-top:22px; padding-bottom:4px">{{slider.title}}</td>
+      <td class="tinytown" >{{slider.min}}</td>
+      <td width="400px"><input type="range" name="volume" id={{slider.name}} min={{slider.min}} max="100" value="{{slider.num = slider.max * slider.value / 100}}" ng-model="slider.value" ng-change="CalculatePrice()" /></td>
+      <td class="tinytown" >max {{slider.max}}</td>
+      <td width="88px"><strong> &nbsp&nbsp{{slider.num}}</strong>{{slider.type}}</td>
+      <td class="tinytown">${{((slider.value * slider.max / 10000) * (slider.scalar)/1e9).toFixed(0)}} Billion</td>
+      <br />
+    </tr>
+  </table>
+
+
+  <br/>
+  <div class="box4">Important Variables<span style="float:right">Total Number of Coins in Model: {{(TotNumCoins/1e6).toFixed(2)}} million</span></div>
+
+  <table>
+    <tr ng-repeat="slider in dVar" class="box{{$index%2}}">
+      <td width="322px" style="margin-top:22px; padding-bottom:4px">{{slider.title}}</td>
+      <td class="tinytown" >{{slider.min}}</td>
+      <td width="400px"><input type="range" name="volume" id={{slider.name}} min={{slider.min}} max="100" value="{{slider.num = slider.max * slider.value / 100}}" ng-model="slider.value" ng-change="CalculatePrice()" /></td>
+      <td class="tinytown" >max {{slider.max}}</td>
+      <td width="222px"><strong> &nbsp&nbsp{{slider.num}}</strong>{{slider.type}}</td>
+      <br />
+    </tr>
+  </table>
+      <div style="color:#cccccc; padding-left:6px; font-size:11px">
+      <br/>
+      Things to consider/include for an improved model: <br/>Linearity is often the worst way to model natural events. Things like Velocity and Number of Coins should be modeled with logarithms. <br/> Volume; Trading Frequency; Improved wallets; 51% Attack Protection; Investment in Bitcoin Companies; Taxation; Use in Smart Contracts; <br/> Improvements in Put and Buy Options; Counting accounts of Wallets etc; etc. Email us at worldbitcoinnetwork@gmail.com <br/>
+      All of them can be added easily <a href="https://github.com/wobine/blackboard101/edit/master/bitcoinPriceSpeculatorAlphaVersion.html" target="_blank">in the code</a> by adding new lines in the json scopes.
+      </div>
+</div>
+ <div style="font-size:14px; text-align:center; background:black; padding:22px; padding-left:22px; color:#909090">A WBN Production - <a href="https://www.youtube.com/channel/UCgo7FCCPuylVk4luP3JAgVw" target="_blank"> World Bitcoin Network 2014 </a></div>
+
+</div>
+
+</body>
+</html>
