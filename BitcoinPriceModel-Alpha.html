@@ -9,7 +9,7 @@
       <link rel="stylesheet" href="css-wbn-BitcoinPriceSpeculator.css">
       <link rel="icon" type="image/png" href="http://www.worldbitcoinnetwork.com/wobinefiles/favicon.ico">
 
-    <script>
+  <script> //all calculation takes place here
       var nameApp = angular.module('nameApp', []);
       nameApp.controller('NameCtrl', function ($scope, $http){
         $http.get('https://blockchain.info/q/totalbc').success(function(data) {
@@ -101,61 +101,60 @@
 
 <body ng-controller="NameCtrl">
 
-<div style="position:fixed; z-index:4;">
-  <div style="font-size:24px; background:black; padding:18px; padding-left:24px; padding-bottom:12px; color:#909090">
-    Mission Impossible: Calculating Bitcoin's Future Value<br/><p style="font-size:13px">A Simple Linear Speculative Model - Alpha Version</p></div>
-    <div style="font-size:24px; background:#f9f9f9; padding-left:22px; padding-right:22px; margin-bottom:-66px; box-shadow: 0px 6px 4px #888888;">
-      <div style="padding-top:12px">
-        <p>Total Bitcoins: <strong id="outtyjson">{{(numBTCs/1e6).toFixed(2)}}</strong> Million &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Current Price: $ <strong id="utterJson">{{bitPrice}}</strong><span style="float:right">Market Cap: $ <strong id="MarkCap">{{(numBTCs * bitPrice/1e9).toFixed(2)}}</strong> Billion</span></p>
-        <div class="strongguy"><h1>{{CalculatePrice()}}{{ZeePriceFormat}}<span ng-if="TotNumCoins<0" style="font-size:16px; color:black"><br/>Mined bitcoins are less than lost bitcoins</span></h1><p style="font-size:14px !important">WBN Model Price - Bitcoin</p></div>
-        <hr></div>
+  <div id="Top of Page" style="position:fixed; z-index:4;">
+      <div style="font-size:24px; background:black; padding:18px; padding-left:24px; padding-bottom:12px; color:#909090">
+      Mission Impossible: Calculating Bitcoin's Future Value<br/><p style="font-size:13px">A Simple Linear Speculative Model - Alpha Version</p></div>
+      <div style="font-size:24px; background:#f9f9f9; padding-left:22px; padding-right:22px; margin-bottom:-66px; box-shadow: 0px 6px 4px #888888;">
+        <div style="padding-top:12px">
+          <p>Total Bitcoins: <strong id="outtyjson">{{(numBTCs/1e6).toFixed(2)}}</strong> Million &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Current Price: $ <strong id="utterJson">{{bitPrice}}</strong><span style="float:right">Market Cap: $ <strong id="MarkCap">{{(numBTCs * bitPrice/1e9).toFixed(2)}}</strong> Billion</span></p>
+          <div class="strongguy"><h1>{{CalculatePrice()}}{{ZeePriceFormat}}<span ng-if="TotNumCoins<0" style="font-size:16px; color:black"><br/>Mined bitcoins are less than lost bitcoins</span></h1><p style="font-size:14px !important">WBN Model Price - Bitcoin</p></div>
+          <hr></div>
+      </div>
     </div>
-  </div>
 
-<div style="position:absolute; margin-top:258px;">
-  <div style="width:960px; padding:22px;">
+  <div id="Sliders" style="position:absolute; margin-top:258px;">
+    <div style="width:960px; padding:22px;">
 
-  <br/>
-    <div class="box4">Key Markets Where Bitcoin Can Grow &nbsp&nbsp&nbsp
-      <button class="zerobuttons" ng-click="setMarksToZero()" ng-init="count=0">Zero All</button>
-      <span style="float:right">Total Market Size: ${{NumberWithCommas((AllMarkets2/1e9).toFixed(2))}} billion</span></div>
-
-  <table>
-    <tr ng-repeat="slider in dMarket" class="box{{$index%2}}">
-      <td width="322px" style="margin-top:22px; padding-bottom:4px">{{slider.title}}</td>
-      <td class="tinytown" >{{slider.min}}</td>
-      <td width="400px"><input type="range" name="volume" id={{slider.name}} min={{slider.min}} max="100" value="{{slider.num = slider.max * slider.value / 100}}" ng-model="slider.value" ng-change="CalculatePrice()" /></td>
-      <td class="tinytown" >max {{slider.max}}</td>
-      <td width="88px"><strong> &nbsp&nbsp{{slider.num}}</strong>{{slider.type}}</td>
-      <td class="tinytown">${{((slider.value * slider.max / 10000) * (slider.scalar)/1e9).toFixed(0)}} Billion</td>
-      <br />
-    </tr>
-  </table>
-
-
-  <br/>
-    <div class="box4">Important Variables &nbsp&nbsp&nbsp
-      <button class="zerobuttons" ng-click="setVarsToZero()" ng-init="count=0">Zero All</button>
-      <span style="float:right"><button class="zerobuttons" ng-click="setTotBTCsToCurrent()" ng-init="count=0">Update BTCs</button>&nbsp&nbsp&nbsp Total Coins (Mined-Lost): {{(TotNumCoins/1e6).toFixed(2)}} million</span></div>
-
-  <table>
-    <tr ng-repeat="slider in dVar" class="box{{$index%2}}">
-      <td width="322px" style="margin-top:22px; padding-bottom:4px">{{slider.title}}</td>
-      <td class="tinytown" >{{slider.min}}</td>
-      <td width="400px"><input type="range" name="volume" id={{slider.name}} min={{slider.min}} max="100" value="{{slider.num = slider.max * slider.value / 100}}" ng-model="slider.value" ng-change="CalculatePrice()" /></td>
-      <td class="tinytown" >max {{slider.max}}</td>
-      <td width="222px"><strong> &nbsp&nbsp{{slider.num}}</strong>{{slider.type}}</td>
-      <br />
-    </tr>
-  </table>
-    <div style="color:#cccccc; padding-left:6px; font-size:11px">
       <br/>
-      Things to consider/include for an improved model: <br/>Linearity is often the worst way to model natural events. Things like Velocity and Number of Coins should be modeled with logarithms. <br/>Other important things to consider: Bitcoin demand as might be conceived via Metcalfe's law; <br/> Volume; Trading Frequency; Improved wallets; 51% Attack Protection; Investment in Bitcoin Companies; Taxation; Use in Smart Contracts; <br/> Improvements in Put and Buy Options; Counting accounts of Wallets etc; etc. Email us at worldbitcoinnetwork@gmail.com <br/>All of them can be added easily <a href="https://github.com/wobine/blackboard101/blob/master/BitcoinPriceModel-Alpha.html" target="_blank">in the code</a> by adding new lines in the json scopes.
-    </div>
-</div>
-   <div style="font-size:14px; text-align:center; background:black; padding:22px; padding-left:22px; color:#909090">A WBN Production - <a href="https://www.youtube.com/channel/UCgo7FCCPuylVk4luP3JAgVw" target="_blank"> World Bitcoin Network 2014 </a></div>
+    <div id="Key Markets" class="box4">Key Markets Where Bitcoin Can Grow &nbsp&nbsp&nbsp
+        <button class="zerobuttons" ng-click="setMarksToZero()" ng-init="count=0">Zero All</button>
+        <span style="float:right">Total Market Size: ${{NumberWithCommas((AllMarkets2/1e9).toFixed(2))}} billion</span></div>
 
-</div>
+    <table>
+      <tr ng-repeat="slider in dMarket" class="box{{$index%2}}">
+        <td width="322px" style="margin-top:22px; padding-bottom:4px">{{slider.title}}</td>
+        <td class="tinytown" >{{slider.min}}</td>
+        <td width="400px"><input type="range" name="volume" id={{slider.name}} min={{slider.min}} max="100" value="{{slider.num = slider.max * slider.value / 100}}" ng-model="slider.value" ng-change="CalculatePrice()" /></td>
+        <td class="tinytown" >max {{slider.max}}</td>
+        <td width="88px"><strong> &nbsp&nbsp{{slider.num}}</strong>{{slider.type}}</td>
+        <td class="tinytown">${{((slider.value * slider.max / 10000) * (slider.scalar)/1e9).toFixed(0)}} Billion</td>
+        <br />
+      </tr>
+    </table>
+      <br/>
+
+    <div class="box4">Important Variables &nbsp&nbsp&nbsp
+        <button class="zerobuttons" ng-click="setVarsToZero()" ng-init="count=0">Zero All</button>
+        <span style="float:right"><button class="zerobuttons" ng-click="setTotBTCsToCurrent()" ng-init="count=0">Update BTCs</button>&nbsp&nbsp&nbsp Total Coins (Mined-Lost): {{(TotNumCoins/1e6).toFixed(2)}} million</span></div>
+
+    <table>
+      <tr ng-repeat="slider in dVar" class="box{{$index%2}}">
+        <td width="322px" style="margin-top:22px; padding-bottom:4px">{{slider.title}}</td>
+        <td class="tinytown" >{{slider.min}}</td>
+        <td width="400px"><input type="range" name="volume" id={{slider.name}} min={{slider.min}} max="100" value="{{slider.num = slider.max * slider.value / 100}}" ng-model="slider.value" ng-change="CalculatePrice()" /></td>
+        <td class="tinytown" >max {{slider.max}}</td>
+        <td width="222px"><strong> &nbsp&nbsp{{slider.num}}</strong>{{slider.type}}</td>
+        <br />
+      </tr>
+    </table>
+      <div style="color:#cccccc; padding-left:6px; font-size:11px">
+        <br/>
+        Things to consider/include for an improved model: <br/>Linearity is often the worst way to model natural events. Things like Velocity and Number of Coins should be modeled with logarithms. <br/>Other important things to consider: Bitcoin demand as might be conceived via Metcalfe's law; <br/> Volume; Trading Frequency; Improved wallets; 51% Attack Protection; Investment in Bitcoin Companies; Taxation; Use in Smart Contracts; <br/> Improvements in Put and Buy Options; Counting accounts of Wallets etc; etc. Email us at worldbitcoinnetwork@gmail.com <br/>All of them can be added easily <a href="https://github.com/wobine/blackboard101/blob/master/BitcoinPriceModel-Alpha.html" target="_blank">in the code</a> by adding new lines in the json scopes.
+      </div>
+  </div>
+   <div id="Bosttom Of Page" style="font-size:14px; text-align:center; background:black; padding:22px; padding-left:22px; color:#909090">A WBN Production - <a href="https://www.youtube.com/channel/UCgo7FCCPuylVk4luP3JAgVw" target="_blank"> World Bitcoin Network 2014 </a></div>
+
+  </div>
 
 </body>
 </html>
