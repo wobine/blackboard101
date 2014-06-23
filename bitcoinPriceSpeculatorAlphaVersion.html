@@ -97,7 +97,7 @@
   <div style="width:960px; padding:22px;">
 
   <br/>
-    <div class="box4">Key Markets Where Bitcoin Can Grow</div>
+    <div class="box4">Key Markets Where Bitcoin Can Grow<span style="float:right">Total Market Size in Model: ${{NumberWithCommas((AllMarkets/1e9).toFixed(2))}} billion</span></div>
 
   <table>
     <tr ng-repeat="slider in dMarket" class="box{{$index%2}}">
@@ -113,7 +113,7 @@
 
 
   <br/>
-  <div class="box4">Important Variables</div>
+  <div class="box4">Important Variables<span style="float:right">Total Number of Coins in Model: {{(TotNumCoins/1e6).toFixed(2)}} million</span></div>
 
   <table>
     <tr ng-repeat="slider in dVar" class="box{{$index%2}}">
@@ -127,8 +127,8 @@
   </table>
       <div style="color:#cccccc; padding-left:6px; font-size:11px">
       <br/>
-      Things to consider/include for an improved model: <br/> Volume; Trading Frequency; Improved wallets; 51% Attack Protection; Investment in Bitcoin Companies; Taxation; Use in Smart Contracts; <br/> Improvements in Put and Buy Options; Counting accounts of Wallets etc; etc. Email us at worldbitcoinnetwork@gmail.com <br/>
-      All of them can be added easily in the code by adding new lines in the json scopes.
+      Things to consider/include for an improved model: <br/>Linearity is often the worst way to model natural events. Things like Velocity and Number of Coins should be modeled with logarithms. <br/> Volume; Trading Frequency; Improved wallets; 51% Attack Protection; Investment in Bitcoin Companies; Taxation; Use in Smart Contracts; <br/> Improvements in Put and Buy Options; Counting accounts of Wallets etc; etc. Email us at worldbitcoinnetwork@gmail.com <br/>
+      All of them can be added easily <a href="https://github.com/wobine/blackboard101/edit/master/bitcoinPriceSpeculatorAlphaVersion.html" target="_blank">in the code</a> by adding new lines in the json scopes.
       </div>
 </div>
  <div style="font-size:14px; text-align:center; background:black; padding:22px; padding-left:22px; color:#909090">A WBN Production - <a href="https://www.youtube.com/channel/UCgo7FCCPuylVk4luP3JAgVw" target="_blank"> World Bitcoin Network 2014 </a></div>
