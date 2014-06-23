@@ -20,6 +20,22 @@
         $scope.NumberWithCommas = function(x) {
           return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); };
 
+        $scope.setMarksToZero = function(){
+          for (i = 0; i < $scope.dMarket.length; i++) { 
+            $scope.dMarket[i].value = 0;
+          }
+        }
+
+        $scope.setVarsToZero = function(){
+          for (i = 0; i < $scope.dVar.length; i++) { 
+            $scope.dVar[i].value = 0;
+          }
+        }
+
+        $scope.setTotBTCsToCurrent = function(){
+            $scope.dVar[0].value = ($scope.numBTCs/210000).toFixed(2);
+        }
+
         $scope.dMarket = [
           {"name":"Amazon","min":0,"max":50,"value":1,"title": "Amazon & Others (Vol:$50 Billion)","isMerch":1,"type":"%", "scalar":50e9},
           {"name":"Gold","min":0,"max":20,"value":0.25,"num":0,"title": "Gold/Store of Value ($8 Trillion)","isMerch":0,"type":"%", "scalar":8e12},
@@ -61,12 +77,15 @@
           }
 
           $scope.AllMarkets = 0;
+          $scope.AllMarkets2 = 0;
           for (i = 0; i < $scope.dMarket.length; i++) { 
             $scope.Unit = ($scope.dMarket[i].value * $scope.dMarket[i].max / 10000) * ($scope.dMarket[i].scalar);
+            $scope.Unit2 = $scope.Unit
             if ($scope.dMarket[i].isMerch == 1) {
               $scope.Unit = $scope.Unit * (1-$scope.MerchVariables);
             }
             $scope.AllMarkets += $scope.Unit;
+            $scope.AllMarkets2 += $scope.Unit2;
           }
 
           if((1-$scope.AllVariables) > 0) {
@@ -97,7 +116,9 @@
   <div style="width:960px; padding:22px;">
 
   <br/>
-    <div class="box4">Key Markets Where Bitcoin Can Grow<span style="float:right">Total Market Size in Model: ${{NumberWithCommas((AllMarkets/1e9).toFixed(2))}} billion</span></div>
+    <div class="box4">Key Markets Where Bitcoin Can Grow &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+      <button style="font-size:10px; color:#ddd; padding:2px; background-color:#888" ng-click="setMarksToZero()" ng-init="count=0">Set Zero</button>
+      <span style="float:right">Total Market Size in Model: ${{NumberWithCommas((AllMarkets2/1e9).toFixed(2))}} billion</span></div>
 
   <table>
     <tr ng-repeat="slider in dMarket" class="box{{$index%2}}">
@@ -113,7 +134,10 @@
 
 
   <br/>
-  <div class="box4">Important Variables<span style="float:right">Total Number of Coins in Model: {{(TotNumCoins/1e6).toFixed(2)}} million</span></div>
+  <div class="box4">Important Variables &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+    <button style="font-size:10px; color:#ddd; padding:2px; background-color:#888" ng-click="setVarsToZero()" ng-init="count=0">Set Zero</button>
+    <button style="font-size:10px; color:#ddd; padding:2px; background-color:#888" ng-click="setTotBTCsToCurrent()" ng-init="count=0">Set BTCs to current</button>
+    <span style="float:right">Total Number of Coins in Model: {{(TotNumCoins/1e6).toFixed(2)}} million</span></div>
 
   <table>
     <tr ng-repeat="slider in dVar" class="box{{$index%2}}">
@@ -127,7 +151,7 @@
   </table>
       <div style="color:#cccccc; padding-left:6px; font-size:11px">
       <br/>
-      Things to consider/include for an improved model: <br/>Linearity is often the worst way to model natural events. Things like Velocity and Number of Coins should be modeled with logarithms. <br/> Volume; Trading Frequency; Improved wallets; 51% Attack Protection; Investment in Bitcoin Companies; Taxation; Use in Smart Contracts; <br/> Improvements in Put and Buy Options; Counting accounts of Wallets etc; etc. Email us at worldbitcoinnetwork@gmail.com <br/>
+      Things to consider/include for an improved model: <br/>Linearity is often the worst way to model natural events. Things like Velocity and Number of Coins should be modeled with logarithms. <br/>Other important things to consider: Bitcoin demand as might be conceived via Metcalfe's law; <br/> Volume; Trading Frequency; Improved wallets; 51% Attack Protection; Investment in Bitcoin Companies; Taxation; Use in Smart Contracts; <br/> Improvements in Put and Buy Options; Counting accounts of Wallets etc; etc. Email us at worldbitcoinnetwork@gmail.com <br/>
       All of them can be added easily <a href="https://github.com/wobine/blackboard101/blob/master/BitcoinPriceModel-Alpha.html" target="_blank">in the code</a> by adding new lines in the json scopes.
       </div>
 </div>
