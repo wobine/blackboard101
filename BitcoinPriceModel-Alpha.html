@@ -29,7 +29,7 @@
         ];
 
         $scope.dVar = [
-          {"name":"TotalBTC","min":0,"max":21,"value":61,"title": "Total Bitcoins (Max 21 Million)","isMerch":0,"type":" Million Coins", "scalar":1e6},
+          {"name":"TotalBTC","min":0,"max":21,"value":61,"title": "Mined Bitcoins (Max 21 Million)","isMerch":0,"type":" Million Coins", "scalar":1e6},
           {"name":"LostBTC","min":0,"max":12,"value":8,"title": "Lost Bitcoins (Max 12 Million)","isMerch":0,"type":" Million Coins", "scalar":1e6},
           {"name":"Risk","min":0,"max":100,"value":10,"title": "Risk of Failure (51% Attack...etc)","isMerch":0,"type":"% Risk of Failure", "scalar":-1},
           {"name":"Velocity","min":0,"max":"100","value":20,"title": "Velocity (Fast=Lower Bitcoin Price)","isMerch":1,"type":"% Max Velocity", "scalar":-1},
@@ -74,7 +74,7 @@
             else {$scope.ZeePrice = $scope.AllMarkets * 0.0000001}; //just a really low number
 
           if($scope.TotNumCoins > 0) {$scope.ZeePriceFormat = "$ " + $scope.NumberWithCommas(($scope.ZeePrice/$scope.TotNumCoins).toFixed(2))}
-            else {$scope.ZeePriceFormat = "Infinity - No Bitcoins Available"};
+            else {$scope.ZeePriceFormat = 'No Bitcoins Available'};
         };
     });
     </script>
@@ -88,7 +88,7 @@
     <div style="font-size:24px; background:#f9f9f9; padding-left:22px; padding-right:22px; margin-bottom:-66px; box-shadow: 0px 6px 4px #888888;">
       <div style="padding-top:12px">
         <p>Total Bitcoins: <strong id="outtyjson">{{(numBTCs/1e6).toFixed(2)}}</strong> Million &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Current Price: $ <strong id="utterJson">{{bitPrice}}</strong> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Market Cap: $ <strong id="MarkCap">{{(numBTCs * bitPrice/1e9).toFixed(2)}}</strong> Billion</p>
-        <div class="strongguy"><h1>{{CalculatePrice()}}{{ZeePriceFormat}}</h1><p style="font-size:14px !important">Bitcoin Price - WBN Model</p></div>
+        <div class="strongguy"><h1>{{CalculatePrice()}}{{ZeePriceFormat}}<span ng-if="TotNumCoins<0" style="font-size:16px; color:black"><br/>Mined Bitcoins < Lost Bitcoins : Cannot Divide By Zero </span></h1><p style="font-size:14px !important">Bitcoin Price - WBN Model</p></div>
         <hr></div>
     </div>
   </div>
