@@ -6,7 +6,7 @@
       <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js">
         </script>
       <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-      <link rel="stylesheet" href="http://www.worldbitcoinnetwork.com/css-wbn-BitcoinPriceSpeculator.css">
+      <link rel="stylesheet" href="css-wbn-BitcoinPriceSpeculator.css">
       <link rel="icon" type="image/png" href="http://www.worldbitcoinnetwork.com/wobinefiles/favicon.ico">
 
   <script> //all calculation takes place here
@@ -14,6 +14,8 @@
       nameApp.controller('NameCtrl', function ($scope, $http){
         $http.get('https://blockchain.info/q/totalbc').success(function(data) {
         $scope.numBTCs = data/100e6});
+        $scope.entered = {market:'Market',title:'Market',min:0,max:100,value:1,isMerch:0,type:'%',scalar:1};
+        $scope.enteredVar = {market:'Variable',title:'Variable',min:0,max:20,value:1,isMerch:0,type:'%',scalar:-1};
         $http.get('https://blockchain.info/q/24hrprice').success(function(data) {
         $scope.bitPrice = data;
         });
@@ -36,23 +38,48 @@
             $scope.dVar[0].value = ($scope.numBTCs/210000).toFixed(2);
         }
 
+        $scope.removeEntry = function(indexNum) {
+          $scope.dMarket.splice(indexNum, 1);
+        };
+
+        $scope.removeEntryVar = function(indexNum) {
+          if (indexNum>1){
+            $scope.dVar.splice(indexNum, 1);
+          }
+        };
+
+        $scope.addMarket = function(){
+          $scope.newIndex = $scope.dMarket.length + 1;
+          $scope.entered.scalar = $scope.entered.scalar * 1e9;
+          $scope.dMarket.push($scope.entered);
+          $scope.entered = {market:'Market',title:'AnotherMarket',min:0,max:100,value:1,isMerch:0,type:'%',scalar:1};
+
+        }
+
+        $scope.addVariable =function(){
+          $scope.newIndex = $scope.dVar.length + 1;
+          $scope.dVar.push($scope.enteredVar);
+          $scope.enteredVar = {market:'Variable',title:'Variable',min:0,max:20,value:1,isMerch:0,type:'%',scalar:-1};
+
+        }
+
         $scope.dMarket = [
-          {"name":"Amazon","min":0,"max":50,"value":1,"title": "Amazon & Others (Vol:$50 Billion)","isMerch":1,"type":"%", "scalar":50e9},
-          {"name":"Gold","min":0,"max":20,"value":0.25,"num":0,"title": "Gold/Store of Value ($8 Trillion)","isMerch":0,"type":"%", "scalar":8e12},
-          {"name":"BlackMarket","min":0,"max":50,"value":0.5,"title": "Black Market ($650 Billion)","isMerch":1,"type":"%", "scalar":65e10},
-          {"name":"MoneySupply","min":0,"max":20,"value":0.25,"title": "Global Money Supply ($3 Trillion)","isMerch":0,"type":"%", "scalar":3e12},
-          {"name":"Remittances","min":0,"max":100,"value":0.4,"title": "Remittances ($500 Billion)","isMerch":1,"type":"%", "scalar":5e11}
+          {"name":"Gold","min":0,"max":20,"value":0.25,"num":0,"title": "Gold / Store of Value","isMerch":0,"type":"%", "scalar":8e12},
+          {"name":"MerchAdopt","min":0,"max":50,"value":1,"title": "Merchant Adoption","isMerch":1,"type":"%", "scalar":300e9},
+          {"name":"MoneySupply","min":0,"max":20,"value":0.25,"title": "Global Money Supply","isMerch":0,"type":"%", "scalar":3e12},
+          {"name":"BlackMarket","min":0,"max":50,"value":0.5,"title": "Black Market","isMerch":1,"type":"%", "scalar":65e10},
+          {"name":"Remittances","min":0,"max":100,"value":0.2,"title": "Remittances","isMerch":1,"type":"%", "scalar":5e11}
         ];
 
         $scope.dVar = [
-          {"name":"TotalBTC","min":0,"max":21,"value":61,"title": "Mined Bitcoins (Max 21 Million)","isMerch":0,"type":" Million Coins", "scalar":1e6},
-          {"name":"LostBTC","min":0,"max":12,"value":8,"title": "Lost Bitcoins (Max 12 Million)","isMerch":0,"type":" Million Coins", "scalar":1e6},
-          {"name":"Risk","min":0,"max":100,"value":10,"title": "Risk of Failure (51% Attack...etc)","isMerch":0,"type":"% Risk of Failure", "scalar":-1},
-          {"name":"Velocity","min":0,"max":"100","value":20,"title": "Velocity (Fast=Lower Bitcoin Price)","isMerch":1,"type":"% Max Velocity", "scalar":-1},
-          {"name":"Downward","min":0,"max":20,"value":28,"title": "Merchant Pressure (Max 20%)","isMerch":1,"type":"% Selling Pressure", "scalar":-1},
-          {"name":"Speculation","min":0,"max":20,"value":35,"title": "Speculation Fever (Max 20%)","isMerch":0,"type":"% Speculative Hype", "scalar":1},
+          {"name":"TotalBTC","min":0,"max":21,"value":61,"title": "Mined Bitcoins (Max 21 Million)","isMerch":0,"type":" Million", "scalar":1e6},
+          {"name":"LostBTC","min":0,"max":12,"value":8,"title": "Lost Bitcoins (Max 12 Million)","isMerch":0,"type":" Million", "scalar":1e6},
+          {"name":"Risk","min":0,"max":100,"value":10,"title": "Risk of Failure (51% Attack...etc)","isMerch":0,"type":"% Failure", "scalar":-1},
+          {"name":"Velocity","min":0,"max":"100","value":20,"title": "Velocity (Faster Lowers Price)","isMerch":1,"type":"% Max Velocity", "scalar":-1},
+          {"name":"Downward","min":0,"max":20,"value":28,"title": "Merchant Pressure (Max 20%)","isMerch":1,"type":"% Pressure", "scalar":-1},
+          {"name":"Speculation","min":0,"max":20,"value":35,"title": "Speculation Fever (Max 20%)","isMerch":0,"type":"% Hype", "scalar":1},
           {"name":"Regulation","min":0,"max":40,"value":7,"title": "Regulation Pressure (Max 40%)","isMerch":0,"type":"% Regulation", "scalar":-1},
-          {"name":"Volatility","min":0,"max":40,"value":20,"title": "Volatility Fears (Max 40%)","isMerch":0,"type":"% Volatility Fears", "scalar":-1},
+          {"name":"Volatility","min":0,"max":40,"value":20,"title": "Volatility Fears (Max 40%)","isMerch":0,"type":"% Fears", "scalar":-1},
         ];
 
 
@@ -107,49 +134,68 @@
       <div style="font-size:22px; background:#f9f9f9; padding-left:22px; padding-right:22px; margin-bottom:-66px; box-shadow: 0px 6px 4px #888888;">
         <div style="padding-top:12px">
           <p>Total Bitcoins: <strong id="outtyjson">{{(numBTCs/1e6).toFixed(2)}}</strong> Million &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Current Price: $ <strong id="utterJson">{{bitPrice}}</strong><span style="float:right">Market Cap: $ <strong id="MarkCap">{{(numBTCs * bitPrice/1e9).toFixed(2)}}</strong> Billion</span></p>
-          <div class="strongguy"><h1 style="font-weight:900">{{CalculatePrice()}}{{ZeePriceFormat}}<span ng-if="TotNumCoins<0" style="font-size:16px; color:black"><br/>Mined bitcoins are less than lost bitcoins</span></h1><p style="font-size:14px !important">WBN Model Price - Bitcoin</p></div>
+          <div class="strongguy"><h1>{{CalculatePrice()}}{{ZeePriceFormat}}<span ng-if="TotNumCoins<0" style="font-size:16px; color:black"><br/>Mined bitcoins are less than lost bitcoins</span></h1><p style="font-size:14px !important">WBN Model Price - Bitcoin</p></div>
           <hr></div>
       </div>
     </div>
 
   <div id="Sliders" style="position:absolute; margin-top:258px;">
-    <div style="width:960px; padding:22px;">
+    <div style="width:1020px; padding:22px;">
 
       <br/>
     <div id="Key Markets" class="box4">Key Markets Where Bitcoin Can Grow &nbsp&nbsp&nbsp
         <button class="zerobuttons" ng-click="setMarksToZero()" ng-init="count=0">Zero All</button>
         <span style="float:right">Total Market Size: ${{NumberWithCommas((AllMarkets2/1e9).toFixed(2))}} billion</span></div>
 
-    <table>
+    <table style="margin-top:-20px">
       <tr ng-repeat="slider in dMarket" class="box{{$index%2}}">
-        <td width="322px" style="margin-top:22px; padding-bottom:4px">{{slider.title}}</td>
+        <td width="322px" style="padding-bottom:4px">{{slider.title}}<span style="float:right; font-size:12px; color:#bbb">Market: ${{NumberWithCommas(slider.scalar/1e9)}} Billion</span></td>
         <td class="tinytown" >{{slider.min}}</td>
-        <td width="400px"><input type="range" name="volume" id={{slider.name}} min={{slider.min}} max="100" value="{{slider.num = slider.max * slider.value / 100}}" ng-model="slider.value" ng-change="CalculatePrice()" /></td>
-        <td class="tinytown" >max {{slider.max}}</td>
-        <td width="88px"><strong> &nbsp&nbsp{{slider.num}}</strong>{{slider.type}}</td>
+        <td width="400px">
+          <input type="range" name="volume" id={{slider.name}} min={{slider.min}} max="100" value="{{slider.num = slider.max * slider.value / 100}}" ng-model="slider.value" ng-change="CalculatePrice()" /></td>
+        <td class="tinytown" >max {{slider.max}}{{slider.type}}</td>
+        <td width="92px"><strong> &nbsp&nbsp{{slider.num}}</strong><span style="font-size:12px; color:#aaa"> {{slider.type}}</span></td>
         <td class="tinytown">${{((slider.value * slider.max / 10000) * (slider.scalar)/1e9).toFixed(0)}} Billion</td>
+        <td><button class="removebuttons" ng-click="removeEntry($index)">remove</button></td>
         <br />
       </tr>
     </table>
+      <div style="color:gray">
+    <form class="box4" ng-submit="addMarket()">
+      Add Market<span style="word-spacing:100px;">&nbsp</span> Market Title &nbsp<input style="background:#ccc; border-color:#ddd; text-align:center; color:white" type="text" size="21" ng-model="entered.title">
+      <!--&nbsp&nbsp Max %:<input type="number" min="0" max="100" ng-model="entered.max" required>
+      &nbsp&nbsp Merchant Based?<input type="number" min="0" max="100" ng-model="entered.isMerch" required>-->
+      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Market Size (Billions) &nbsp $ <input style="background:#ccc; border-color:#ddd; text-align:center; color:white" type="number" min="0" max="100" ng-model="entered.scalar" required>
+      <input class="zerobuttons" style="float:right" type="submit" value="add new market">
+    </form>
+  </div>
       <br/>
 
     <div class="box4">Important Variables &nbsp&nbsp&nbsp
         <button class="zerobuttons" ng-click="setVarsToZero()" ng-init="count=0">Zero All</button>
         <span style="float:right"><button class="zerobuttons" ng-click="setTotBTCsToCurrent()" ng-init="count=0">Update BTCs</button>&nbsp&nbsp&nbsp Total Coins (Mined-Lost): {{(TotNumCoins/1e6).toFixed(2)}} million</span></div>
 
-    <table>
+    <table style="margin-top:-20px">
       <tr ng-repeat="slider in dVar" class="box{{$index%2}}">
         <td width="322px" style="margin-top:22px; padding-bottom:4px">{{slider.title}}</td>
         <td class="tinytown" >{{slider.min}}</td>
         <td width="400px"><input type="range" name="volume" id={{slider.name}} min={{slider.min}} max="100" value="{{slider.num = slider.max * slider.value / 100}}" ng-model="slider.value" ng-change="CalculatePrice()" /></td>
         <td class="tinytown" >max {{slider.max}}</td>
-        <td width="222px"><strong> &nbsp&nbsp{{slider.num}}</strong>{{slider.type}}</td>
+        <td width="128px"><strong> &nbsp&nbsp{{slider.num}}</strong><span style="font-size:12px; color:#aaa"> {{slider.type}}</span></td>
+        <td><button ng-if="($index>1)" class="removebuttons" ng-click="removeEntryVar($index)">remove</button></td>
         <br />
       </tr>
     </table>
+          <div style="color:gray">
+    <form class="box4" ng-submit="addVariable()">
+      Add Variable<span style="word-spacing:100px;">&nbsp</span> Variable Title &nbsp<input style="background:#ccc; border-color:#ddd; text-align:center; color:white" type="text" size="21" ng-model="enteredVar.title">
+      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Max Effect (Percentage) &nbsp % <input style="background:#ccc; border-color:#ddd; text-align:center; color:white" type="number" min="0" max="100" ng-model="enteredVar.max" required>
+      <input class="zerobuttons" style="float:right" type="submit" value="add new variable">
+    </form>
+  </div>
       <div style="color:#cccccc; padding-left:6px; font-size:11px">
         <br/>
-        Things to consider/include for an improved model: <br/>Linearity is often the worst way to model natural events. Things like Velocity and Number of Coins should be modeled with logarithms. <br/>Other important things to consider: Bitcoin demand as might be conceived via Metcalfe's law; <br/> Volume; Trading Frequency; Improved wallets; 51% Attack Protection; Investment in Bitcoin Companies; Taxation; Use in Smart Contracts; <br/> Improvements in Put and Buy Options; Counting accounts of Wallets etc; etc. Email us at worldbitcoinnetwork@gmail.com <br/>All of them can be added easily <a href="https://github.com/wobine/blackboard101/blob/master/BitcoinPriceModel-Alpha.html" target="_blank">in the code</a> by adding new lines in the json scopes.
+        Things to consider/include for an improved model: <br/>Linearity is often the worst way to model natural events. Things like Velocity and Number of Coins should be modeled with logarithms. <br/>Other important things to consider: Bitcoin demand as might be conceived via Metcalfe's law; <br/> Volume; Loans; Trading Frequency; Improved wallets; 51% Attack Protection; Investment in Bitcoin Companies; Taxation; Use in Smart Contracts; <br/> Improvements in Put and Buy Options; Counting accounts of Wallets etc; etc. Email us at worldbitcoinnetwork@gmail.com <br/>All of them can be added easily <a href="https://github.com/wobine/blackboard101/blob/master/BitcoinPriceModel-Alpha.html" target="_blank">in the code</a> by adding new lines in the json scopes.
       </div>
   </div>
    <div id="Bosttom Of Page" style="font-size:11px; text-align:center; background:black; padding:22px; padding-left:22px; color:#909090"><a href="https://www.youtube.com/channel/UCgo7FCCPuylVk4luP3JAgVw" target="_blank"><img src="http://www.worldbitcoinnetwork.com/wobinefiles/images/tinylogo.png" height="24px"></a><br/>A WBN Production - <a href="https://www.youtube.com/channel/UCgo7FCCPuylVk4luP3JAgVw" target="_blank"> World Bitcoin Network 2014 </a></div>
