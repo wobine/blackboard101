@@ -80,10 +80,10 @@
           {"name":"TotalBTC","min":0,"max":21,"value":61,"title": "Mined Bitcoins (Max 21 Million)","isMerch":0,"type":" Million", "scalar":1e6},
           {"name":"LostBTC","min":0,"max":12,"value":8,"title": "Lost Bitcoins (Max 12 Million)","isMerch":0,"type":" Million", "scalar":1e6},
           {"name":"Risk","min":0,"max":100,"value":10,"title": "Risk of Failure (51% Attack...etc)","isMerch":0,"type":"% Failure", "scalar":-1},
-          {"name":"Velocity","min":0,"max":"100","value":20,"title": "Velocity (Faster Lowers Price)","isMerch":1,"type":"% Max Velocity", "scalar":-1},
+          {"name":"Velocity","min":0,"max":"100","value":20,"title": "Velocity (Faster Lowers Price)","isMerch":1,"type":"% Max Vel.", "scalar":-1},
           {"name":"Downward","min":0,"max":20,"value":28,"title": "Merchant Pressure (Max 20%)","isMerch":1,"type":"% Pressure", "scalar":-1},
           {"name":"Speculation","min":0,"max":20,"value":35,"title": "Speculation Fever (Max 20%)","isMerch":0,"type":"% Hype", "scalar":1},
-          {"name":"Regulation","min":0,"max":40,"value":7,"title": "Regulation Pressure (Max 40%)","isMerch":0,"type":"% Regulation", "scalar":-1},
+          {"name":"Regulation","min":0,"max":40,"value":7,"title": "Regulation Pressure (Max 40%)","isMerch":0,"type":"% Reg.", "scalar":-1},
           {"name":"Volatility","min":0,"max":40,"value":20,"title": "Volatility Fears (Max 40%)","isMerch":0,"type":"% Fears", "scalar":-1},
         ];
 
@@ -105,6 +105,9 @@
               $scope.AllVariables += $scope.Unit;
               }
               else {$scope.MerchVariables += $scope.Unit;
+                if($scope.MerchVariables>1){
+                  $scope.MerchVariables = 1;
+                }
               }
           }
 
