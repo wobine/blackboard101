@@ -1,5 +1,5 @@
 # Super simple Elliptic Curve Presentation. No imported libraries, wrappers, nothing. 
-# For educational purposes only
+# For educational purposes only. Remember to use Python 2.7.6 or lower. You'll need to make changes for Python 3.
 
 # Below are the public specs for Bitcoin's curve - the secp256k1
 
