@@ -1,4 +1,4 @@
-# This is the code used in the WBN video - Merkle Roots and Merkle Trees
+# This is the code used in the WBN video - Merkle Roots and Merkle Trees. Find the video on YouTube
 
 import hashlib
 
